@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Крестики-нолики</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke-width='14' stroke-linecap='round'%3E%3Cpath stroke='%23ec5f5c' d='M14 14 46 46M46 14 14 46'/%3E%3Ccircle stroke='%2326a393' cx='70' cy='70' r='18'/%3E%3C/g%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <h1 class="title"><span class="t-x" data-i18n="titleX">Крестики</span><span data-i18n="titleSep">-</span><span class="t-o" data-i18n="titleO">нолики</span></h1>
+      <div class="controls">
+        <div class="segmented lang" data-setting="lang" role="group" data-i18n-aria="language">
+          <button type="button" data-value="ru" lang="ru" title="Русский">Рус</button>
+          <button type="button" data-value="en" lang="en" title="English">Eng</button>
+          <button type="button" data-value="th" lang="th" title="ไทย">ไทย</button>
+        </div>
+        <div class="volume">
+          <button id="muteBtn" class="icon-btn" type="button" aria-label="Выключить звук"></button>
+          <input id="volume" type="range" min="0" max="100" step="1" data-i18n-aria="volume" aria-label="Громкость">
+        </div>
+      </div>
+    </header>
+
+    <section class="game">
+      <div class="scoreboard" id="scoreboard">
+        <div class="score-card x" id="cardX">
+          <div class="who"><svg class="mini x" viewBox="0 0 100 100" aria-hidden="true"><path d="M28 28 72 72M72 28 28 72"/></svg><span id="nameX">Игрок 1</span></div>
+          <div class="score" id="scoreX">0</div>
+          <div class="pieces" id="piecesX"></div>
+        </div>
+        <div class="score-card draws">
+          <div class="who" data-i18n="draws">Ничьи</div>
+          <div class="score" id="scoreD">0</div>
+        </div>
+        <div class="score-card o" id="cardO">
+          <div class="who"><svg class="mini o" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="26"/></svg><span id="nameO">Игрок 2</span></div>
+          <div class="score" id="scoreO">0</div>
+          <div class="pieces" id="piecesO"></div>
+        </div>
+      </div>
+
+      <div class="status" id="status" aria-live="polite"></div>
+
+      <div class="card board-card">
+        <div class="board intro" id="board">
+          <svg class="grid" viewBox="0 0 300 300" aria-hidden="true">
+            <line x1="100" y1="14" x2="100" y2="286"/>
+            <line x1="200" y1="14" x2="200" y2="286"/>
+            <line x1="14" y1="100" x2="286" y2="100"/>
+            <line x1="14" y1="200" x2="286" y2="200"/>
+          </svg>
+          <svg class="win-svg" id="winSvg" viewBox="0 0 300 300" aria-hidden="true">
+            <line id="winLine"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="newGame" class="btn primary" type="button" data-i18n="newGame">Новая игра</button>
+        <button id="resetScore" class="btn secondary" type="button" data-i18n="resetScore">Сбросить счёт</button>
+      </div>
+      <p class="rules" id="rules"></p>
+    </section>
+
+    <aside class="card settings">
+      <h2 class="settings-title" data-i18n="settings">Настройки</h2>
+
+      <div class="field">
+        <span class="label" data-i18n="opponent">Соперник</span>
+        <div class="segmented" data-setting="opponent">
+          <button type="button" data-value="pvp" data-i18n="pvp">Игрок</button>
+          <button type="button" data-value="pvc" data-i18n="pvc">Компьютер</button>
+        </div>
+      </div>
+
+      <div class="collapsible" id="sideBlock">
+        <div class="inner">
+          <div class="field">
+            <span class="label" data-i18n="side">Вы играете за</span>
+            <div class="segmented" data-setting="side">
+              <button type="button" data-value="X" data-i18n="sideX">Крестики</button>
+              <button type="button" data-value="O" data-i18n="sideO">Нолики</button>
+            </div>
+            <span class="hint" data-i18n="sideHint">Крестики всегда ходят первыми</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="label" data-i18n="mode">Режим игры</span>
+        <div class="segmented" data-setting="mode">
+          <button type="button" data-value="classic" data-i18n="classic">Классический</button>
+          <button type="button" data-value="vanish" data-i18n="vanish">Исчезающие</button>
+        </div>
+      </div>
+
+      <div class="collapsible" id="vanishBlock">
+        <div class="inner">
+          <div class="field row">
+            <div>
+              <span class="label" data-i18n="limit">Фигур у каждого</span>
+              <span class="hint" data-i18n="limitHint">от 3 до 4 на поле 3×3</span>
+            </div>
+            <div class="stepper">
+              <button type="button" id="limitDec" data-i18n-aria="fewer" aria-label="Меньше фигур">−</button>
+              <output id="limitVal">3</output>
+              <button type="button" id="limitInc" data-i18n-aria="more" aria-label="Больше фигур">+</button>
+            </div>
+          </div>
+          <label class="field row toggle">
+            <div>
+              <span class="label" data-i18n="doomed">Подсветка исчезновения</span>
+              <span class="hint" data-i18n="doomedHint">Какая фигура пропадёт следующим ходом</span>
+            </div>
+            <input type="checkbox" id="showDoomed">
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
