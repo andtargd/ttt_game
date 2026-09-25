@@ -3,8 +3,7 @@
   'use strict';
 
   const MISTAKE_CHANCE = 0.15; // вероятность, что компьютер сделает неудачный ход
-  const MIN_LIMIT = 3;
-  const MAX_LIMIT = 4; // при 5+ фигурах у каждого поле 3×3 заполнится раньше, чем что-то исчезнет
+  const VANISH_LIMIT = 3; // в режиме исчезающих фигур у каждого всегда 3 фигуры
 
   const $ = (s) => document.querySelector(s);
   const t = I18N.t;
@@ -25,14 +24,13 @@
     opponent: 'pvc',
     side: 'X',
     mode: 'classic',
-    limit: 3,
     showDoomed: true,
     lang: I18N.detect(),
     ...store.get('settings', {}),
   };
   if (!I18N.has(settings.lang)) settings.lang = I18N.detect();
   I18N.set(settings.lang);
-  settings.limit = Math.min(MAX_LIMIT, Math.max(MIN_LIMIT, Number(settings.limit) || MIN_LIMIT));
+  delete settings.limit;
 
   let volume = store.get('volume', 0.6);
   let muted = store.get('muted', false);
@@ -47,9 +45,6 @@
     rules: $('#rules'),
     sideBlock: $('#sideBlock'),
     vanishBlock: $('#vanishBlock'),
-    limitVal: $('#limitVal'),
-    limitDec: $('#limitDec'),
-    limitInc: $('#limitInc'),
     showDoomed: $('#showDoomed'),
     volume: $('#volume'),
     muteBtn: $('#muteBtn'),
@@ -306,7 +301,7 @@
     });
     hideWinLine();
     els.board.classList.remove('clearing', 'locked', 'over');
-    state = Game.create(settings.mode === 'vanish' ? settings.limit : 0);
+    state = Game.create(settings.mode === 'vanish' ? VANISH_LIMIT : 0);
     updateCells();
     if (isCPU(state.turn)) cpuMove();
     else updateTurn();
@@ -328,15 +323,12 @@
 
     els.sideBlock.classList.toggle('closed', settings.opponent !== 'pvc');
     els.vanishBlock.classList.toggle('closed', settings.mode !== 'vanish');
-    els.limitVal.textContent = settings.limit;
-    els.limitDec.disabled = settings.limit <= MIN_LIMIT;
-    els.limitInc.disabled = settings.limit >= MAX_LIMIT;
     els.showDoomed.checked = settings.showDoomed;
 
     for (const p of ['X', 'O']) els.name[p].textContent = playerName(p);
 
     els.rules.textContent = settings.mode === 'vanish'
-      ? t('rulesVanish', { k: settings.limit, next: settings.limit + 1 })
+      ? t('rulesVanish', { k: VANISH_LIMIT, next: VANISH_LIMIT + 1 })
       : t('rulesClassic');
   }
 
@@ -372,17 +364,6 @@
     updateCells();
     renderStatus();
   }
-
-  function bumpLimit(delta) {
-    const next = Math.min(MAX_LIMIT, Math.max(MIN_LIMIT, settings.limit + delta));
-    if (next === settings.limit) return;
-    changeSetting('limit', next);
-    els.limitVal.classList.remove('bump');
-    void els.limitVal.offsetWidth;
-    els.limitVal.classList.add('bump');
-  }
-  els.limitDec.addEventListener('click', () => bumpLimit(-1));
-  els.limitInc.addEventListener('click', () => bumpLimit(1));
 
   els.showDoomed.addEventListener('change', () => {
     settings.showDoomed = els.showDoomed.checked;

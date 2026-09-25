@@ -559,39 +559,6 @@ svg.mini.o circle { stroke: var(--o); }
 .collapsible > .inner { overflow: hidden; min-height: 0; }
 .collapsible.closed { grid-template-rows: 0fr; opacity: 0; }
 
-.stepper {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 4px;
-  border-radius: 12px;
-  background: var(--seg-bg);
-}
-.stepper button {
-  width: 34px;
-  height: 30px;
-  border: 0;
-  border-radius: 9px;
-  background: var(--surface-solid);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-  transition: transform 0.15s, opacity 0.2s;
-}
-.stepper button:active:not(:disabled) { transform: scale(0.92); }
-.stepper button:disabled { opacity: 0.35; cursor: default; }
-.stepper output {
-  display: inline-block;
-  min-width: 30px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 16px;
-  font-variant-numeric: tabular-nums;
-}
-.stepper output.bump { animation: bump 0.45s var(--ease-spring); }
-
 .toggle { cursor: pointer; }
 .toggle input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
 .switch {
